@@ -80,6 +80,7 @@
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\Policies\ReceiverFactory.h" />
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\Policies\TimeoutFactory.h" />
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\Policies\WaitHandleFactory.h" />
+    <ClInclude Include="..\..\Inc\IPC\Managed\detail\ResumableBase.h" />
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\Server.h" />
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\ServerAcceptor.h" />
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\Throw.h" />

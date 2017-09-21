@@ -95,6 +95,9 @@
     <ClInclude Include="..\..\Inc\IPC\Managed\detail\AccessorBase.h">
       <Filter>detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Inc\IPC\Managed\detail\ResumableBase.h">
+      <Filter>detail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="detail">

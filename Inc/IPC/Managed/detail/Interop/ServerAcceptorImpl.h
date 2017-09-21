@@ -24,6 +24,9 @@ namespace Managed
         {}
 
         template <typename Request, typename Response>
+        Transport<Request, Response>::ServerAcceptor::ServerAcceptor(ServerAcceptor&& other) = default;
+
+        template <typename Request, typename Response>
         Transport<Request, Response>::ServerAcceptor::~ServerAcceptor() = default;
 
     } // Interop

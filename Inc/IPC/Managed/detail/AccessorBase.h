@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ResumableBase.h"
 #include "NativeObject.h"
 #include "ComponentHolder.h"
 #include "ErrorHandler.h"
@@ -19,7 +20,7 @@ namespace Managed
     namespace detail
     {
         template <typename T, typename NativeAccessor>
-        ref class AccessorBase abstract : IAccessor<T>
+        ref class AccessorBase abstract : ResumableBase<NativeAccessor>, IAccessor<T>
         {
         public:
             virtual event System::EventHandler<ComponentEventArgs<T>^>^ Connected;
@@ -28,47 +29,9 @@ namespace Managed
 
             virtual event System::EventHandler<ErrorEventArgs^>^ Error;
 
-            virtual property System::Boolean Enabled
-            {
-                System::Boolean get()
-                {
-                    return static_cast<bool>(*m_accessor);
-                }
-
-                void set(System::Boolean value)
-                {
-                    if (Enabled != value)
-                    {
-                        try
-                        {
-                            *m_accessor = value ? boost::optional<NativeAccessor>{ MakeAccessor() } : boost::none;
-                        }
-                        catch (const std::exception& /*e*/)
-                        {
-                            ThrowManagedException(std::current_exception());
-                        }
-                    }
-                }
-            }
-
         protected:
             AccessorBase()
             {}
-
-            virtual NativeAccessor MakeAccessor() abstract;
-
-            property NativeAccessor& Accessor
-            {
-                NativeAccessor& get()
-                {
-                    if (!Enabled)
-                    {
-                        throw gcnew Exception{ "Accessor is disabled." };
-                    }
-
-                    return **m_accessor;
-                }
-            }
 
         internal:
             void TriggerConnected(T component)
@@ -85,9 +48,6 @@ namespace Managed
             {
                 Error(this, gcnew ErrorEventArgs{ e });
             }
-
-        private:
-            NativeObject<boost::optional<NativeAccessor>> m_accessor;
         };
 
 

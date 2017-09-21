@@ -2,6 +2,7 @@
 
 #include "Transport.h"
 #include "Server.h"
+#include "ResumableBase.h"
 #include "NativeObject.h"
 #include "ManagedCallback.h"
 
@@ -15,20 +16,47 @@ namespace Managed
     namespace detail
     {
         template <typename Request, typename Response>
-        ref class Transport<Request, Response>::ServerAcceptor : IServerAcceptor
+        ref class Transport<Request, Response>::ServerAcceptor : ResumableBase<NativeServerAcceptor>, IServerAcceptor
         {
         public:
             ServerAcceptor(System::String^ name, HandlerFactory^ handlerFactory, const NativeConfig& config)
-                : m_acceptor{
-                    msclr::interop::marshal_context().marshal_as<const char*>(name),
-                    MakeManagedCallback(gcnew AcceptedLambda{ this, config }),
-                    *config },
-                  m_handlerFactory{ handlerFactory }
+                : m_name{ name },
+                  m_handlerFactory{ handlerFactory },
+                  m_config{ config }
             {}
 
             virtual event System::EventHandler<ComponentEventArgs<IServer^>^>^ Accepted;
 
             virtual event System::EventHandler<ErrorEventArgs^>^ Error;
+
+            virtual void Start()
+            {
+                if (Enabled)
+                {
+                    throw gcnew Exception{ "Acceptor has already stared." };
+                }
+
+                Enabled = true;
+            }
+
+            virtual void Stop()
+            {
+                if (!Enabled)
+                {
+                    throw gcnew Exception{ "Acceptor has already stopped." };
+                }
+
+                Enabled = false;
+            }
+
+        protected:
+            NativeServerAcceptor MakeResumable() override
+            {
+                return NativeServerAcceptor{
+                    msclr::interop::marshal_context().marshal_as<const char*>(m_name),
+                    MakeManagedCallback(gcnew AcceptedLambda(this, *m_config)),
+                    **m_config };
+            }
 
         internal:
             ref struct AcceptedLambda
@@ -66,8 +94,9 @@ namespace Managed
             };
 
         private:
-            NativeObject<NativeServerAcceptor> m_acceptor;
+            System::String^ m_name;
             HandlerFactory^ m_handlerFactory;
+            NativeObject<NativeConfig> m_config;
         };
 
     } // detail

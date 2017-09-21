@@ -127,6 +127,8 @@ namespace Managed
 
                 explicit ServerAcceptor(const char* name, HandlerFactory&& callback, const Config& config);
 
+                ServerAcceptor(ServerAcceptor&& other);
+
                 ~ServerAcceptor();
             };
 

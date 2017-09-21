@@ -35,7 +35,7 @@ namespace Managed
 
                     try
                     {
-                        for (auto&& item : Accessor()())
+                        for (auto&& item : Resumable()())
                         {
                             auto holder = std::get_deleter<ComponentHolder<Server^>>(item);
                             assert(holder);
@@ -52,7 +52,7 @@ namespace Managed
             }
 
         protected:
-            NativeServersAccessor MakeAccessor() override
+            NativeServersAccessor MakeResumable() override
             {
                 auto& transport = **m_transport;
 

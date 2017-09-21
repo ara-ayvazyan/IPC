@@ -36,7 +36,7 @@ namespace Managed
                 {
                     try
                     {
-                        auto holder = std::get_deleter<ComponentHolder<Transport::Client^>>(Accessor());
+                        auto holder = std::get_deleter<ComponentHolder<Transport::Client^>>(Resumable());
                         assert(holder);
                         return *holder;
                     }
@@ -48,7 +48,7 @@ namespace Managed
             }
 
         protected:
-            NativeClientAccessor MakeAccessor() override
+            NativeClientAccessor MakeResumable() override
             {
                 auto& transport = **m_transport;
 
